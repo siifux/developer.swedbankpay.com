@@ -39,6 +39,11 @@ you are strongly advised to **read this entire page to the end**.
   </div>
 </div>
 
+
+{% include flexslider-posts.html %}
+
+
+
 {% include jumbotron.html body="**Swedbank Pay's API Platform** is built using the [REST architectural style](https://en.wikipedia.org/wiki/Representational_state_transfer) and the request and responses come in the [JSON](http://json.org/) format. The API has predictable, resource-oriented URIs and use default HTTP features, like HTTP authentication (using OAuth 2), HTTP methods and headers. These techniques are widely used and understood by most HTTP client libraries." %}
 
 ## Connection and Protocol

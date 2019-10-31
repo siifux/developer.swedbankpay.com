@@ -30,6 +30,8 @@ Swedbank Pay Checkout allows your customers to be identified with Swedbank Pay,
 enabling existing Swedbank Pay Checkout users to pay with their favorite payment
 methods in just a few simple steps.
 
+
+
 ## Prerequisites
 
 To start integrating Swedbank Pay Checkout, you need the following:
