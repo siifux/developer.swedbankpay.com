@@ -18,6 +18,8 @@ sidebar:
       title: Mobile Pay Payments
     - url: /payments/credit
       title: Credit Payments
+    - url: /payments/trustly
+      title: Trustly Payments  
     - url: /payments/direct-debit
       title: Direct Debit Payments
 ---
