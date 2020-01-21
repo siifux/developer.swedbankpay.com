@@ -1,5 +1,5 @@
 ---
-title: Swedbank Pay Trustly Payments - After Payment
+title: Swedbank Pay Trustly Payments Redirect
 sidebar:
   navigation:
   - title: Trustly Payments
@@ -13,3 +13,4 @@ sidebar:
     - url: /payments/trustly/other-features
       title: Other Features
 ---
+

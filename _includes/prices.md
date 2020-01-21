@@ -1,4 +1,5 @@
 {% assign payment-instrument = include.payment-instrument | default: 'creditcard' %}
+{% assign payment-instrument = include.payment-instrument | default: 'trustly' %}
 
 The `prices` resource lists the prices related to a specific payment.
 

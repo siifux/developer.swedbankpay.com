@@ -6,6 +6,8 @@ sidebar:
     items:
     - url: /payments/trustly
       title: Introduction
+    - url: /payments/trustly/redirect
+      title: Redirect
     - url: /payments/trustly/after-payment
       title: After Payment
     - url: /payments/trustly/other-features

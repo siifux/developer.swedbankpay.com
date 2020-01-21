@@ -1,5 +1,6 @@
 {% assign payment-order = include.payment-order | default: false %}
 {% assign payment-instrument = include.payment-instrument | default: "creditcard" %}
+{% assign payment-instrument = include.payment-instrument | default: "trustly" %}
 
 ## Callback
 
