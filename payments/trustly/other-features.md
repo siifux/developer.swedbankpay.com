@@ -16,23 +16,12 @@ sidebar:
 
 {% include alert-development-section.md %}
 
-{% include settlement-reconciliation.md %}
+## Payment Resource
 
-{% include callback-reference.md payment-instrument="trustly" %}
-
-{% include payment-link.md %}
-
-{% include transactions-reference.md payment-instrument="trustly" %}
-
-{% include abort-reference.md instrument="trustly" %}
-
-{% include expand-parameter.md %}
-
-{% include payee-info.md %}
-
-{% include prices.md payment-instrument="trustly" %}
-
-### Create Payment
+The `payment` resource is central to all payment instruments. All operations 
+that target the payment resource directly produce a response similar to the 
+example seen below. The response given contains all operations that are possible
+to perform in the current state of the payment.
 
 To create a Trustly payment, you perform an HTTP `POST` against the
 `/psp/trustly/payments` resource.
@@ -136,7 +125,7 @@ Content-Type: application/json
         "remainingReversalAmount": 0,
         "description": "Test Purchase",
         "userAgent": "Mozilla/5.0...",
-        "language": "nb-NO",
+        "language": "sv-SE",
         "prices": { "id": "/psp/trustly/payments/{{ page.paymentId }}/prices" },
         "transactions": { "id": "/psp/trustly/payments/{{ page.paymentId }}/transactions" },
         "sales": { "id": "/psp/trustly/payments/{{ page.paymentId }}/sales" },
@@ -147,12 +136,12 @@ Content-Type: application/json
   },
     "operations": [
         {
-            "href": "{{ page.apiUrl }}/psp/trustly/payments/<paymentId>/sales",
+            "href": "{{ page.apiUrl }}/psp/trustly/payments/{{ page.paymentId }}/sales",
             "rel": "redirect-sale",
             "method": "POST"
         },
         {
-            "href": "{{ page.apiUrl }}/psp/trustly/payments/<paymentId>",
+            "href": "{{ page.apiUrl }}/psp/trustly/payments/{{ page.paymentId }}",
             "rel": "update-payment-abort",
             "method": "PATCH"
         }
@@ -166,7 +155,7 @@ A payment resource has a set of operations that can be performed on it,
 from its creation to its end.
 The operations available at any given time vary between payment instruments and
 depends on the current state of the payment resource.
-A list of possible operations for Direct Debit Payments
+A list of possible operations for Trustly Payments
 and their explanation is given below.
 
 {:.code-header}
@@ -181,9 +170,19 @@ and their explanation is given below.
             "rel": "update-payment-abort"
         },
         {
+            "method": "POST",
+            "href": "{{ page.apiUrl }}/psp/trustly/payments/{{ page.paymentToken }}/sales",
+            "rel": "create-sale"
+        },
+        {
             "method": "GET",
             "href": "{{ page.frontEndUrl }}/trustly/payments/sales/{{ page.paymentToken }}",
             "rel": "redirect-sale"
+        },
+        {
+            "method": "GET",
+            "href": "{{ page.frontEndUrl }}/trustly/core/scripts/client/{{ page.paymentToken }}",
+            "rel": "view-sales"
         }
     ]
 }
@@ -208,11 +207,14 @@ the given operation.
 | Operation              | Description                                                                                                                        |
 | :--------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
 | `update-payment-abort` | Aborts the payment before any financial transactions are performed.                                                                |
-| `redirect-sale`        | Contains the redirect-URI that redirects the consumer to a Swedbank Pay hosted payment page prior to creating a sales transaction. |
+| `create-sale`        | Creates a `sales` transaction without redirection to a payment page.                                                                 |
+| `redirect-sale`        |Contains the redirect-URI that redirects the consumer to a Swedbank Pay hosted payment page prior to creating a sales transaction. |
+| `view-sales` | Contains the URI of the JavaScript used to create a Hosted View iframe directly without redirecting the consumer to separate payment page.  |
+
 
 ### Trustly transactions
 
-All Direct Debit specific transactions are described below.
+All Trustly specific transactions are described below.
 
 #### Sales
 
@@ -424,31 +426,23 @@ Content-Type: application/json
 | `reversal.id`          | `string` | The relative URI of the created capture transaction.                  |
 | `reversal.transaction` | `object` | The object representation of the generic [transaction][reversal-get]. |
 
-### Callback
+{% include transactions-reference.md payment-instrument="trustly" %}
 
-When a change or update from the back-end system are made on a payment or
-transaction, Swedbank Pay will perform a callback to inform the payee
-(merchant) about this update.
-Callback functionality is explaned in more detail
-[here][technical-reference-callback].
+{% include callback-reference.md payment-instrument="trustly" %}
 
-```mermaid
-sequenceDiagram
-  activate SwedbankPay
-  SwedbankPay->>-Merchant: POST <callbackUrl>
-  activate Merchant
-  note left of Merchant: Callback by SwedbankPay
-  Merchant-->>SwedbankPay: HTTP response
+{% include payee-info.md %}
 
-  Merchant->>-SwedbankPay: GET Trustly payment
-  activate SwedbankPay
-  note left of Merchant: First API request
-  SwedbankPay-->>-Merchant: payment resource
-```
+{% include payment-link.md %}
+
+{% include settlement-reconciliation.md %}
+
+## Problem messages
+
+{% include prices.md payment-instrument="trustly" %}
 
 {% include iterator.html
-                         prev_href="other-features"
-                         prev_title="Back: Other Features" %}
+                         prev_href="after-payment"
+                         prev_title="Back: After Payment" %}
 
 ------------------------------------
 [core-payment-resources-prices-objecttypes]: #prices
