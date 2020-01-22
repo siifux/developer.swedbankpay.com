@@ -18,8 +18,8 @@ sidebar:
 
 ## Payment Resource
 
-The `payment` resource is central to all payment instruments. All operations 
-that target the payment resource directly produce a response similar to the 
+The `payment` resource is central to all payment instruments. All operations
+that target the payment resource directly produce a response similar to the
 example seen below. The response given contains all operations that are possible
 to perform in the current state of the payment.
 
@@ -211,234 +211,15 @@ the given operation.
 | `redirect-sale`        |Contains the redirect-URI that redirects the consumer to a Swedbank Pay hosted payment page prior to creating a sales transaction. |
 | `view-sales` | Contains the URI of the JavaScript used to create a Hosted View iframe directly without redirecting the consumer to separate payment page.  |
 
-
-### Trustly transactions
-
-All Trustly specific transactions are described below.
-
-#### Sales
-
-The `Sales` resource lists the sales transactions (one or more) on
-a specific payment.
-
-{:.code-header}
-**Request**
-
-```http
-GET /psp/trustly/payments/{{ page.paymentId }}/sales HTTP/1.1
-Host: {{ page.apiHost }}
-Authorization: Bearer <AccessToken>
-Content-Type: application/json
-```
-
-{:.code-header}
-**Response**
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-    "payment": "/psp/trustly/payments/{{ page.paymentId }}",
-    "sales": {
-        "id": "/psp/trustly/payments/{{ page.paymentId }}/sales",
-        "salesList": [
-            {
-                "id": "/psp/trustly/payments/{{ page.paymentId }}/sales/{{ page.transactionId }}",
-                "selectedBank": "NordeaFI",
-                "deviceIsMobile": true,
-                "transaction": {
-                    "id": "/psp/trustly/payments/{{ page.paymentId }}/transactions/{{ page.transactionId }}",
-                    "created": "2018-09-14T01:01:01.01Z",
-                    "updated": "2018-09-14T01:01:01.03Z",
-                    "type": "Sale",
-                    "state": "Initialized",
-                    "number": 1234567890,
-                    "amount": 1000,
-                    "vatAmount": 250,
-                    "description": "Test transaction",
-                    "payeeReference": "AH123456",
-                    "failedReason": "",
-                    "failedActivityName": "",
-                    "failedErrorCode": "",
-                    "failedErrorDescription": "",
-                    "isOperational": "FALSE",
-                    "operations": []
-                }
-            },
-            {
-                "id": "/psp/trustly/payments/{{ page.paymentId }}/sales/{{ page.transactionId }}",
-                "selectedBank": "NordeaFI",
-                "deviceIsMobile": true,
-                "transaction": {
-                    "id": "/psp/trustly/payments/{{ page.paymentId }}/transactions/{{ page.transactionId }}",
-                    "created": "2018-09-14T01:01:01.01Z",
-                    "updated": "2018-09-14T01:01:01.03Z",
-                    "type": "Sale",
-                    "state": "Initialized",
-                    "number": 1234567890,
-                    "amount": 1000,
-                    "vatAmount": 250,
-                    "description": "Test transaction",
-                    "payeeReference": "AH123456",
-                    "failedReason": "",
-                    "failedActivityName": "",
-                    "failedErrorCode": "",
-                    "failedErrorDescription": "",
-                    "isOperational": true,
-                    "operations": [
-                        {
-                            "href": "{{ page.apiUrl }}/psp/trustly/payments/{{ page.paymentId }}",
-                            "rel": "edit-sale",
-                            "method": "PATCH"
-                        }
-                    ]
-                }
-            }
-        ]
-    }
-}
-```
-
-#### Reversals
-
-The `Reversals` resource list the reversals transactions
-(one or more) on a specific payment.
-
-{:.code-header}
-**Request**
-
-```http
-GET /psp/trustly/payments/{{ page.paymentId }}/reversals HTTP/1.1
-Host: {{ page.apiHost }}
-Authorization: Bearer <AccessToken>
-Content-Type: application/json
-```
-
-{:.code-header}
-**Response**
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-    "payment": "/psp/trustly/payments/{{ page.paymentId }}",
-    "reversals": {
-        "id": "/psp/trustly/payments/{{ page.paymentId }}/reversals",
-        "reversalList": [
-            {
-                "id": "/psp/trustly/payments/{{ page.paymentId }}/reversals/{{ page.transactionId }}",
-                "transaction": {
-                    "id": "/psp/trustly/payments/{{ page.paymentId }}/transactions/{{ page.transactionId }}",
-                    "created": "2016-09-14T01:01:01.01Z",
-                    "updated": "2016-09-14T01:01:01.03Z",
-                    "type": "Reversal",
-                    "state": "Initialized",
-                    "number": 1234567890,
-                    "amount": 1000,
-                    "vatAmount": 250,
-                    "description": "Test transaction",
-                    "payeeReference": "AH123456",
-                    "isOperational": true,
-                    "operations": []
-                }
-            }
-        ]
-    }
-}
-```
-
-{:.table .table-striped}
-| Property         | Type     | Description                                                                                          |
-| :--------------- | :------- | :--------------------------------------------------------------------------------------------------- |
-| `payment`        | `string` | The relative URI of the payment that the reversal transactions belong to.                            |
-| `reversalList`   | `array`  | The array of reversal transaction objects.                                                           |
-| `reversalList[]` | `object` | The reversal transaction object representation of the reversal transaction resource described below. |
-
-##### Create Reversal transaction
-
-You can create a reversal transaction against a completed sales
-transaction by adding that transaction's `payeeReference` in the request body.
-A callback request will follow from Swedbank Pay.
-
-{:.code-header}
-**Request**
-
-```http
-POST /psp/trustly/payments/{{ page.paymentId }}/reversals HTTP/1.1
-Host: {{ page.apiHost }}
-Authorization: Bearer <AccessToken>
-Content-Type: application/json
-
-{
-    "transaction": {
-        "amount": 1500,
-        "vatAmount": 0,
-        "description" : "Test Reversal",
-        "payeeReference": "ABC123"
-    }
-}
-```
-
-{:.table .table-striped}
-| Required | Property                 | Type         | Description                                                                                                                                                                |
-| :------: | :----------------------- | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|  ✔︎︎︎︎︎  | `transaction`            | `object`     | The `object` representation of the generic [transaction resource][transaction-resource].                                                                                   |
-|    ✔︎    | └➔&nbsp;`amount`         | `integer`    | Amount Entered in the lowest momentary units of the selected currency. E.g. `10000` `100.00 SEK`, `5000` `50.00 SEK`.                                                      |
-|    ✔︎    | └➔&nbsp;`vatAmount`      | `integer`    | Amount Entered in the lowest momentary units of the selected currency. E.g. `10000` `100.00 SEK`, `5000` `50.00 SEK`.                                                      |
-|    ✔︎    | └➔&nbsp;`description`    | `string`     | A textual description of the capture                                                                                                                                       |
-|    ✔︎    | └➔&nbsp;`payeeReference` | `string(35)` | A  reference that must match the  ##payeeReference## of the sales transaction you want to reverse. See [`payeeReference`][technical-reference-payeereference] for details. |
-
-{:.code-header}
-**Response**
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-    "payment": "/psp/trustly/payments/{{ page.paymentId }}",
-    "reversal": {
-        "id": "/psp/trustly/payments/{{ page.paymentId }}/reversals/{{ page.transactionId }}",
-        "transaction": {
-            "id": "/psp/trustly/payments/{{ page.paymentId }}/transactions/{{ page.transactionId }}",
-            "created": "2016-09-14T01:01:01.01Z",
-            "updated": "2016-09-14T01:01:01.03Z",
-            "type": "Reversal",
-            "state": "Initialized",
-            "number": 1234567890,
-            "amount": 1000,
-            "vatAmount": 250,
-            "description": "Test transaction",
-            "payeeReference": "AH123456",
-            "isOperational": true,
-            "operations": []
-        }
-    }
-}
-```
-
-{:.table .table-striped}
-| Property               | Type     | Description                                                           |
-| :--------------------- | :------- | :-------------------------------------------------------------------- |
-| `payment`              | `string` | The relative URI of the payment this capture transaction belongs to.  |
-| `reversal.id`          | `string` | The relative URI of the created capture transaction.                  |
-| `reversal.transaction` | `object` | The object representation of the generic [transaction][reversal-get]. |
-
 {% include transactions-reference.md payment-instrument="trustly" %}
 
 {% include callback-reference.md payment-instrument="trustly" %}
 
+## Payee Info
+
 {% include payee-info.md %}
 
-{% include payment-link.md %}
-
 {% include settlement-reconciliation.md %}
-
-## Problem messages
-
-{% include prices.md payment-instrument="trustly" %}
 
 {% include iterator.html
                          prev_href="after-payment"
