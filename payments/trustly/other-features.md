@@ -16,6 +16,10 @@ sidebar:
 
 {% include alert-development-section.md %}
 
+{% include jumbotron.html body="Welcome to Other Features - a subsection of
+Trustly Payments. This section has extented code examples and features
+that were not covered by the previous subsections." %}
+
 ## Payment Resource
 
 The `payment` resource is central to all payment instruments. All operations
