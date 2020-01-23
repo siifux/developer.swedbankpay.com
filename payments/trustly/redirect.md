@@ -16,9 +16,47 @@ sidebar:
 
 {% include alert-development-section.md %}
 
+{% include jumbotron.html body="Swedbank Pay Trustly Payments is an online payment
+instrument allowing payers to split a purchase into several payments.
+The basic redirect purchase scenario is the simplest and most common way to
+implement Trustly Payments." %}
+
+## Introduction
+
+Redirect is the integration that lets Swedbank Pay handle the payments, while
+you handle your core activities. When ready to pay, the consumer will be
+redirected to a secure Swedbank Pay hosted site. Finally, the consumer will be
+redirected back to your website after the payment process.
+
+* When properly set up in your merchant/webshop site and the payer starts the
+  purchase process, you need to make a `POST` request towards Swedbank Pay with
+  your Purchase information. This will generate a payment object with a unique
+  `paymentID`. You will receive a **redirect URL** to a Swedbank Pay payment
+  page.
+* You need to redirect the payer's browser to that specified URL so that the
+  payer can enter the payment details in a secure Swedbank Pay environment.
+* Swedbank Pay will redirect the payer's browser to - one of two specified URLs,
+  depending on whether the payment session is followed through completely or
+  cancelled beforehand. Please note that both a successful and rejected payment
+  reach completion, in contrast to a cancelled payment.
+* When you detect that the payer reach your `completeUrl` , you need to do a
+  `GET` request to receive the state of the transaction, containing the
+  `paymentID` generated in the first step, to receive the state of the
+  transaction.
+
+### General
+
+{% include alert.html type="success" icon="link" body="
+**Defining CallbackURL**: When implementing a scenario, it is strongly
+recommended to set a [CallbackURL][callback-url] in the `POST` request.
+If `callbackURL` is set, Swedbank Pay will send a postback request to this
+URL when the consumer has fulfilled the payment. You need to do a `GET` request,
+containing the `paymentID` generated in the first step, to receive the state
+of the transaction." %}
+
 ### Create Payment
 
-To create a Direct Debit payment, you perform an HTTP `POST` against the
+To create a Trustly payment, you perform an HTTP `POST` against the
 `/psp/trustly/payments` resource.
 
 An example of a payment creation request is provided below.
@@ -75,8 +113,7 @@ Content-Type: application/json
 |  ✔︎︎︎︎︎  | └➔&nbsp;`intent`             | `string`     | Sale is the only type used for direct debit payments.                                                                                                                                                                                                     |
 |  ✔︎︎︎︎︎  | └➔&nbsp;`currency`           | `string`     | The currency used.                                                                                                                                                                                                                                        |
 |  ✔︎︎︎︎︎  | └➔&nbsp;`prices`             | `object`     | The `prices` resource lists the prices related to a specific payment.                                                                                                                                                                                     |
-|  ✔︎︎︎︎︎  | └─➔&nbsp;`type`              | `string`     | `Trustly`                                                                                   |
-
+|  ✔︎︎︎︎︎  | └─➔&nbsp;`type`              | `string`     | Use the generic type `Directdebit` if you want to enable all bank types supported by merchant contract, otherwise specify a specific bank type. [See the Prices object types for more information.][technical-reference-price-object].                      |
 |  ✔︎︎︎︎︎  | └─➔&nbsp;`amount`            | `integer`    | Amount is entered in the lowest momentary units of the selected currency. E.g. 10000 = 100.00 SEK 5000 = 50.00 SEK.                                                                                                                                       |
 |  ✔︎︎︎︎︎  | └─➔&nbsp;`vatAmount`         | `integer`    | If the amount given includes VAT, this may be displayed for the user in the payment page (redirect only). Set to 0 (zero) if this is not relevant.                                                                                                        |
 |  ✔︎︎︎︎   | └➔&nbsp;`description`        | `string(40)` | A textual description max 40 characters of the purchase.                                                                                                                                                                                                  |
@@ -95,7 +132,7 @@ Content-Type: application/json
 |          | └─➔&nbsp;`payeeName`         | `string`     | The payee name (like merchant name) that will be displayed to consumer when redirected to PayEx.                                                                                                                                                          |
 |          | └─➔&nbsp;`productCategory`   | `string`     | A product category or number sent in from the payee/merchant. This is not validated by PayEx, but will be passed through the payment process and may be used in the settlement process.                                                                   |
 |          | └─➔&nbsp;`orderReference`    | `string(50)` | The order reference should reflect the order reference found in the merchant's systems.                                                                                                                                                                   |
-|          | └─➔&nbsp;`subsite`           | `String(40)` | The subsite field can be used to perform split settlement on the payment. The subsites must be resolved with Swedbank Pay reconciliation before being used.                                                                                               |
+|          | └─➔&nbsp;`subsite`           | `String(40)` | The subsite field can be used to perform split settlement on the payment. The subsites must be resolved with Swedbank Pay reconciliation before being used.                                                                                               |                                                                                 |
 
 {:.code-header}
 **Response**
@@ -108,7 +145,7 @@ Content-Type: application/json
    "payment": {
        "id": "/psp/trustly/payments/{{ page.paymentId }}",
        "number": 1234567890,
-       "instrument": "DirectDebit",
+       "instrument": "Trustly",
        "created": "2018-10-09T13:01:01Z",
        "updated": "2018-10-09T13:01:01Z",
        "state": "Ready",
@@ -187,12 +224,8 @@ for the given operation.
 
 | Operation              | Description                                                                                                                        |
 | :--------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
-| `update-payment-abort` | [Aborts][abort-payment] the payment before any financial transactions are performed.                           |
+| `update-payment-abort` | [Aborts][abort-payment] the payment before any financial transactions are performed.                                               |
 | `redirect-sale`        | Contains the redirect-URI that redirects the consumer to a Swedbank Pay hosted payment page prior to creating a sales transaction. |
-
-## Trustly transactions
-
-All Direct Debit specific transactions are described below.
 
 ### Sales
 
@@ -277,163 +310,6 @@ Content-Type: application/json
         ]
     }
 }
-```
-
-#### Create Sales transaction
-
-The sales transaction This is managed either by by redirecting the end-user
-to the hosted payment page.
-
-### Reversals
-
-The `Reversals` resource list the reversals transactions (one or more) on a
-specific payment.
-
-{:.code-header}
-**Request**
-
-```http
-GET /psp/trustly/payments/{{ page.paymentId }}/reversals HTTP/1.1
-Host: {{ page.apiHost }}
-Authorization: Bearer <AccessToken>
-Content-Type: application/json
-```
-
-{:.code-header}
-**Response**
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-   "payment": "/psp/trustly/payments/{{ page.paymentId }}",
-   "reversals": {
-       "id": "/psp/trustly/payments/{{ page.paymentId }}/reversals",
-       "reversalList": [
-            {
-               "id": "/psp/trustly/payments/{{ page.paymentId }}/reversals/{{ page.transactionId }}",
-               "transaction": {
-                   "id": "/psp/trustly/payments/{{ page.paymentId }}/transactions/{{ page.transactionId }}",
-                   "created": "2016-09-14T01:01:01.01Z",
-                   "updated": "2016-09-14T01:01:01.03Z",
-                   "type": "Reversal",
-                   "state": "Completed",
-                   "number": 1234567890,
-                   "amount": 1000,
-                   "vatAmount": 250,
-                   "description": "Test transaction",
-                   "payeeReference": "AH123456",
-                   "isOperational": true,
-                   "operations": []
-                }
-            }
-        ]
-    }
-}
-```
-
-{:.table .table-striped}
-| Property         | Type     | Description                                                                                          |
-| :--------------- | :------- | :--------------------------------------------------------------------------------------------------- |
-| `payment`        | `string` | The relative URI of the payment that the reversal transactions belong to.                            |
-| `reversalList`   | `array`  | The array of reversal transaction objects.                                                           |
-| `reversalList[]` | `object` | The reversal transaction object representation of the reversal transaction resource described below. |
-
-#### Create Reversal transaction
-
-You can create a reversal transaction against a completed sales transaction
-by adding that transaction's payeeReference in the request body.
-A callback request will follow from PayEx.
-
-{:.code-header}
-**Request**
-
-```http
-POST /psp/trustly/payments/{{ page.paymentId }}/reversals HTTP/1.1
-Host: {{ page.apiHost }}
-Authorization: Bearer <AccessToken>
-Content-Type: application/json
-
-{
-   "transaction": {
-       "amount": 1500,
-       "vatAmount": 0,
-       "description": "Test Reversal",
-       "payeeReference": "ABC123"
-    }
-}
-```
-
-{:.table .table-striped}
-| Required | Property                 | Type         | Description                                                                                                                                                          |
-| :------: | :----------------------- | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|  ✔︎︎︎︎︎  | `transaction`            | `object`     | The transaction object.                                                                                                                                              |
-|  ✔︎︎︎︎︎  | └➔&nbsp;`amount`         | `integer`    | Amount entered in the lowest momentary units of the selected currency. E.g. `10000` = `100.00 SEK`, `5000` = `50.00 SEK`.                                            |
-|  ✔︎︎︎︎︎  | └➔&nbsp;`vatAmount`      | `integer`    | Amount entered in the lowest momentary units of the selected currency. E.g. `10000` = `100.00 SEK`, `5000` = `50.00 SEK`.                                            |
-|  ✔︎︎︎︎︎  | └➔&nbsp;`description`    | `string`     | A textual description of the capture.                                                                                                                                |
-|  ✔︎︎︎︎︎  | └➔&nbsp;`payeeReference` | `string(35)` | A  reference that must match the  payeeReference of the sales transaction you want to reverse. See [payeeReference][technical-reference-payeereference] for details. |
-
-{:.code-header}
-**Response**
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-   "payment": "/psp/trustly/payments/{{ page.paymentId }}",
-   "reversal": {
-       "id": "/psp/trustly/payments/{{ page.paymentId }}/reversals/{{ page.transactionId }}",
-       "transaction": {
-           "id": "/psp/trustly/payments/{{ page.paymentId }}/transactions/{{ page.transactionId }}",
-           "created": "2016-09-14T01:01:01.01Z",
-           "updated": "2016-09-14T01:01:01.03Z",
-           "type": "Reversal",
-           "state": "Completed",
-           "number": 1234567890,
-           "amount": 1000,
-           "vatAmount": 250,
-           "description": "Test transaction",
-           "payeeReference": "AH123456",
-           "isOperational": true,
-           "operations": []
-        }
-    }
-}
-```
-
-{:.table .table-striped}
-| Property              | Type     | Description                                                                                                       |
-| :-------------------- | :------- | :---------------------------------------------------------------------------------------------------------------- |
-| `payment`             | `string` | The relative URI of the payment this capture transaction belongs to.                                              |
-| `reversal`            | `object` | The `reversal`resource contains information about the `reversal` transaction made against a direct debit payment. |
-| └➔&nbsp;`id`          | `string` | The relative URI of the created capture transaction.                                                              |
-| └➔&nbsp;`transaction` | `object` | The object representation of the generic [transaction resource][technical-reference-transactions].                |
-
-## Callback
-
-When a change or update from the back-end system are made on a payment or
-transaction, Swedbank Pay will perform a callback to inform the payee
-(merchant) about this update.
-
-```mermaid
-sequenceDiagram
-  Activate Merchant
-  Activate PAYEX
-  PAYEX-->>Merchant: POST <callbackUrl>
-  note left of Merchant: Callback by PayEx
-  Merchant-->>PAYEX: HTTP response
-  Deactivate PAYEX
-  Deactivate Merchant
-
-  Activate Merchant
-  Merchant->>PAYEX: GET <Direct Debit payment>
-  note left of Merchant: First API request
-  Activate PAYEX
-  PAYEX-->>Merchant: payment resource
-  Deactivate PAYEX
-  Deactivate Merchant
 ```
 
 {% include iterator.html next_href="after-payment"
