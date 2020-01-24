@@ -33,9 +33,9 @@ redirected back to your website after the payment process.
   your Purchase information. This will generate a payment object with a unique
   `paymentID`. You will receive a **redirect URL** to a Swedbank Pay payment
   page.
-* You need to redirect the payer's browser to that specified URL so that the
+* You need to redirect the payer's Consumer to that specified URL so that the
   payer can enter the payment details in a secure Swedbank Pay environment.
-* Swedbank Pay will redirect the payer's browser to - one of two specified URLs,
+* Swedbank Pay will redirect the payer's Consumer to - one of two specified URLs,
   depending on whether the payment session is followed through completely or
   cancelled beforehand. Please note that both a successful and rejected payment
   reach completion, in contrast to a cancelled payment.
@@ -54,7 +54,7 @@ URL when the consumer has fulfilled the payment. You need to do a `GET` request,
 containing the `paymentID` generated in the first step, to receive the state
 of the transaction." %}
 
-### Create Payment
+## Create Payment
 
 To create a Trustly payment, you perform an HTTP `POST` against the
 `/psp/trustly/payments` resource.
@@ -118,7 +118,7 @@ Content-Type: application/json
 |  ✔︎︎︎︎︎  | └─➔&nbsp;`vatAmount`         | `integer`    | If the amount given includes VAT, this may be displayed for the user in the payment page (redirect only). Set to 0 (zero) if this is not relevant.                                                                                                        |
 |  ✔︎︎︎︎   | └➔&nbsp;`description`        | `string(40)` | A textual description max 40 characters of the purchase.                                                                                                                                                                                                  |
 |          | └➔&nbsp;`payerReference`     | `string`     | The reference to the payer (consumer/end-user) from the merchant system, like mobile number, customer number etc.                                                                                                                                         |
-|  ✔︎︎︎︎   | └➔&nbsp;`userAgent`          | `string`     | The user agent reference of the consumer's browser - [see user agent definition][user-agent].                                                                                                                                                             |
+|  ✔︎︎︎︎   | └➔&nbsp;`userAgent`          | `string`     | The user agent reference of the consumer's Consumer - [see user agent definition][user-agent].                                                                                                                                                             |
 |  ✔︎︎︎︎   | └➔&nbsp;`language`           | `string`     | `nb-NO`, `sv-SE` or `en-US`.                                                                                                                                                                                                                                    |
 |  ✔︎︎︎︎︎  | └➔&nbsp;`urls`               | `object`     | The `urls` resource lists urls that redirects users to relevant sites.                                                                                                                                                                                    |
 |  ✔︎︎︎︎   | └─➔&nbsp;`completeUrl`       | `string`     | The URI that Swedbank Pay will redirect back to when the payment is followed through. This does not indicate a successful payment, only that it has reached a completion state. A`GET`request needs to be performed on the payment to inspect it further. |
@@ -126,7 +126,7 @@ Content-Type: application/json
 |          | └─➔&nbsp;`callbackUrl`       | `string`     | The URI that Swedbank Pay will perform an HTTP POST against every time a transaction is created on the payment. See [callback][technical-reference-callbackurl] for details.                                                                              |
 |          | └─➔&nbsp;`logoUrl`           | `string`     | The URI that will be used for showing the customer logo. Must be a picture with at most 50px height and 400px width. Require https.                                                                                                                       |
 |          | └─➔&nbsp;`termsOfServiceUrl` | `string`     | A URI that contains your terms and conditions for the payment, to be linked on the payment page. Require https.                                                                                                                                           |
-|  ✔︎︎︎︎︎  | └➔&nbsp;`payeenfo`           | `object`     | The `payeeInfo` contains information about the payee.                                                                                                                                                                                                     |
+|  ✔︎︎︎︎︎  | └➔&nbsp;`payeeInfo`           | `object`     | The `payeeInfo` contains information about the payee.                                                                                                                                                                                                     |
 |  ✔︎︎︎︎   | └─➔&nbsp;`payeeId`           | `string`     | This is the unique id that identifies this payee (like merchant) set by PayEx.                                                                                                                                                                            |
 |  ✔︎︎︎︎   | └─➔&nbsp;`payeeReference`    | `string(35)` | A unique reference from the merchant system. It is set per operation to ensure an exactly-once delivery of a transactional operation. See [payeeReference][technical-reference-payeereference] for details.                                               |
 |          | └─➔&nbsp;`payeeName`         | `string`     | The payee name (like merchant name) that will be displayed to consumer when redirected to PayEx.                                                                                                                                                          |
@@ -167,12 +167,12 @@ Content-Type: application/json
   },
    "operations": [
         {
-           "href": "{{ page.apiUrl }}/psp/trustly/payments/<paymentId>/sales",
+           "href": "{{ page.apiUrl }}/psp/trustly/payments/{{ page.paymentId }}/sales",
            "rel": "redirect-sale",
            "method": "POST"
         },
         {
-           "href": "http://{{ page.apiHost }}/psp/trustly/payments/<paymentId>",
+           "href": "http://{{ page.apiHost }}/psp/trustly/payments/{{ page.paymentId }}",
            "rel": "update-payment-abort",
            "method": "PATCH"
         }
@@ -180,57 +180,50 @@ Content-Type: application/json
 }
 ```
 
-## Operations
-
-A payment resource has a set of operations that can be performed on it.
-The operations available at any given time vary between payment instruments and
-depends on the current state of the payment resource.
-A list of possible operations for Trustly Payments and their explanation
-is given below.
-
-{:.code-header}
-**Operations**
-
-```js
-{
-   "operations": [
-        {
-           "method": "PATCH",
-           "href": "{{ page.apiUrl }}/psp/trustly/payments/{{ page.transactionId }}",
-           "rel": "update-payment-abort"
-        },
-        {
-           "method": "GET",
-           "href": "{{ page.frontEndUrl }}/trustly/payments/sales/{{ page.paymentToken }}",
-           "rel": "redirect-sale"
-        }
-    ]
-}
-```
-
-{:.table .table-striped}
-| Property | Description                                                         |
-| :------- | :------------------------------------------------------------------ |
-| `href`   | The target URI to perform the operation against.                    |
-| `rel`    | The name of the relation the operation has to the current resource. |
-| `method` | The HTTP method to use when performing the operation.               |
-
-The operations should be performed as described in each response and not as
-described here in the documentation. Always use the `href` and `method` as
-specified in the response by finding the appropriate operation based on its
-`rel` value. The only thing that should be hard coded in the client is the value
-of the `rel` and the request that will be sent in the HTTP body of the request
-for the given operation.
-
-| Operation              | Description                                                                                                                        |
-| :--------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
-| `update-payment-abort` | [Aborts][abort-payment] the payment before any financial transactions are performed.                                               |
-| `redirect-sale`        | Contains the redirect-URI that redirects the consumer to a Swedbank Pay hosted payment page prior to creating a sales transaction. |
-
-### Sales
+## Sales
 
 The `Sales` resource lists the sales transactions (one or more) on a
 specific payment.
+
+```mermaid
+sequenceDiagram
+  activate Consumer
+  Consumer->>-Merchant: start purchase
+  activate Merchant
+  Merchant->>-SwedbankPay: POST <Trustly create payment> (operation=SALE)
+  activate SwedbankPay
+  note left of Merchant: First API request
+  SwedbankPay-->>-Merchant: payment resource
+  activate Merchant
+  Merchant-->>-Consumer: redirect to payments page
+  Consumer ->- Merchant: GET <Trustly payment sales>
+  Merchant --> Consumer: display [view-trustly-consumer-information]
+  Consumer --> Consumer: Input consumer Information
+  Consumer -> SwedbankPay: submit consumer information
+  SwedbankPay -->- Consumer: display [view-trustly-iframe]
+  activate Consumer
+  activate SwedbankPay
+  activate Trustly
+  Trustly-->>Trustly: Consumer confirms payment
+  activate Trustly
+  opt Callback
+  Trustly-->>-SwedbankPay: Payment status
+  activate SwedbankPay
+  SwedbankPay-->>-Trustly: Callback response
+  activate Trustly
+  SwedbankPay--x-Merchant: Transaction callback
+  end
+  SwedbankPay-->>Consumer: Redirect to merchant
+  activate Consumer
+  
+  Consumer-->>-Merchant: Redirect
+  activate Merchant
+  Merchant->>-SwedbankPay: GET <Trustly payment>
+  activate SwedbankPay
+  SwedbankPay-->>-Merchant: Payment response
+  activate Merchant
+  Merchant-->>-Consumer: Payment Status  
+```
 
 {:.code-header}
 **Request**
