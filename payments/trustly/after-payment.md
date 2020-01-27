@@ -20,6 +20,10 @@ sidebar:
 
 {% include payment-resource.md  payment-instrument="trustly" %}
 
+{% include jumbotron.html body="Welcome to After Payment - a subsection of
+Trustly Payments. This section has extented code examples and features
+that for the operations in Trustly taht occurs after the purchase has been completed." %}
+
 * *Abort:* It is possible to abort the process if the payment has no successful
   transactions. [See the Abort description here][abort].
 * For `reversals`, you will need to implement the [Reversal request][reversal].
