@@ -43,16 +43,6 @@ redirected back to your website after the payment process.
   `paymentID` generated in the first step, to receive the state of the
   transaction.
 
-### General
-
-{% include alert.html type="success" icon="link" body="
-**Defining CallbackURL**: When implementing a scenario, it is strongly
-recommended to set a [CallbackURL][callback-url] in the `POST` request.
-If `callbackURL` is set, Swedbank Pay will send a postback request to this
-URL when the consumer has fulfilled the payment. You need to do a `GET` request,
-containing the `paymentID` generated in the first step, to receive the state
-of the transaction." %}
-
 ## Purchase
 
 To create a Trustly payment, you perform an HTTP `POST` against the
@@ -75,7 +65,7 @@ Content-Type: application/json
    "payment": {
        "operation": "Purchase",
        "intent": "Sale",
-       "currency": "EUR",
+       "currency": "SEK",
        "prices": [
             {
                "type": "SwedbankPay",
@@ -152,12 +142,12 @@ Content-Type: application/json
        "state": "Ready",
        "operation": "Purchase",
        "intent": "Sale",
-       "currency": "EUR",
+       "currency": "SEK",
        "amount": 1500,
        "remainingReversalAmount": 0,
        "description": "Test Purchase",
        "userAgent": "Mozilla/5.0...",
-       "language": "nb-NO",
+       "language": "sv-SE",
        "prices": { "id": "/psp/trustly/payments/{{ page.paymentId }}/prices" },
        "transactions": { "id": "/psp/trustly/payments/{{ page.paymentId }}/transactions" },
        "sales": { "id": "/psp/trustly/payments/{{ page.paymentId }}/sales" },
@@ -173,13 +163,23 @@ Content-Type: application/json
            "method": "POST"
         },
         {
-           "href": "http://{{ page.apiHost }}/psp/trustly/payments/{{ page.paymentId }}",
+           "href": "{{ page.apiHost }}/psp/trustly/payments/{{ page.paymentId }}",
            "rel": "update-payment-abort",
            "method": "PATCH"
         }
     ]
 }
 ```
+
+### General
+
+{% include alert.html type="success" icon="link" body="
+**Defining CallbackURL**: When implementing a scenario, it is strongly
+recommended to set a [CallbackURL][callback-url] in the `POST` request.
+If `callbackURL` is set, Swedbank Pay will send a postback request to this
+URL when the consumer has fulfilled the payment. You need to do a `GET` request,
+containing the `paymentID` generated in the first step, to receive the state
+of the transaction." %}
 
 ## Sales
 
