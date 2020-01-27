@@ -37,8 +37,7 @@ redirected back to your website after the payment process.
   payer can enter the payment details in a secure Swedbank Pay environment.
 * Swedbank Pay will redirect the payer's Consumer to - one of two specified URLs,
   depending on whether the payment session is followed through completely or
-  cancelled beforehand. Please note that both a successful and rejected payment
-  reach completion, in contrast to a cancelled payment.
+  cancelled beforehand.
 * When you detect that the payer reach your `completeUrl` , you need to do a
   `GET` request to receive the state of the transaction, containing the
   `paymentID` generated in the first step, to receive the state of the
@@ -54,7 +53,7 @@ URL when the consumer has fulfilled the payment. You need to do a `GET` request,
 containing the `paymentID` generated in the first step, to receive the state
 of the transaction." %}
 
-## Create Payment
+## Purchase
 
 To create a Trustly payment, you perform an HTTP `POST` against the
 `/psp/trustly/payments` resource.
@@ -63,8 +62,10 @@ An example of a payment creation request is provided below.
 Each individual Property of the JSON document is described in the
 following section.
 
+{:.code-header}
+**Response**
+
 ```http
-Request
 POST /psp/trustly/payments HTTP/1.1
 Host: {{ page.apiHost }}
 Authorization: Bearer <AccessToken>
@@ -187,52 +188,27 @@ specific payment.
 
 ```mermaid
 sequenceDiagram
-  activate Consumer
-  Consumer->>-Merchant: start purchase
+  Consumer->>Merchant: Start purchase
   activate Merchant
-  Merchant->>-SwedbankPay: POST <Trustly create payment> (operation=SALE)
+  Merchant->>SwedbankPay: POST <Trustly create payment> (operation=SALE)
   activate SwedbankPay
-  note left of Merchant: First API request
-  SwedbankPay-->>-Merchant: payment resource
-  activate Merchant
-  Merchant-->>-Consumer: redirect to payments page
-  Consumer ->- Merchant: GET <Trustly payment sales>
-  Merchant --> Consumer: display [view-trustly-consumer-information]
-  Consumer --> Consumer: Input consumer Information
-  Consumer -> SwedbankPay: submit consumer information
-  SwedbankPay -->- Consumer: display [view-trustly-iframe]
-  activate Consumer
+  SwedbankPay ->>SwedbankPay: Create Payment
+  SwedbankPay-->>Merchant: Payment resource
+  deactivate SwedbankPay
+  Merchant-->>Consumer: Redirect to payments page
+  deactivate Merchant
+  Consumer->>SwedbankPay: GET /trustly/payments/ales/<paymentToken>
   activate SwedbankPay
-  activate Trustly
-  Trustly-->>Trustly: Consumer confirms payment
-  activate Trustly
-  opt Callback
-  Trustly-->>-SwedbankPay: Payment status
+  SwedbankPay-->>Consumer: Display [view-trustly-consumer information]
+  deactivate SwedbankPay
+  Consumer->>Consumer: Input user information
+  Consumer->>SwedbankPay: Submit consumer information
   activate SwedbankPay
-  SwedbankPay-->>-Trustly: Callback response
-  activate Trustly
-  SwedbankPay--x-Merchant: Transaction callback
-  end
-  SwedbankPay-->>Consumer: Redirect to merchant
-  activate Consumer
-  
-  Consumer-->>-Merchant: Redirect
-  activate Merchant
-  Merchant->>-SwedbankPay: GET <Trustly payment>
-  activate SwedbankPay
-  SwedbankPay-->>-Merchant: Payment response
-  activate Merchant
-  Merchant-->>-Consumer: Payment Status  
-```
-
-{:.code-header}
-**Request**
-
-```http
-GET /psp/trustly/payments/{{ page.paymentId }}/sales HTTP/1.1
-Host: {{ page.apiHost }}
-Authorization: Bearer <AccessToken>
-Content-Type: application/json
+  SwedbankPay->>SwedbankPay: Create sale
+  SwedbankPay-->>Consumer: Display[view-trustly]
+  deactivate SwedbankPay
+  Consumer->>Trustly: Complete Trustly payment
+  SwedbankPay-->> Consumer: redirect CompleteUrl
 ```
 
 {:.code-header}
