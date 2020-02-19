@@ -22,8 +22,7 @@ sidebar:
                       icon="warning"
                       header="Site under development"
                       body="This section of the Developer Portal is under
-                      construction and should not be used to integrate against
-                      Swedbank Pay's APIs yet." %}
+                      construction and may be incomplete or contain errors." %}
 
 {% include alert.html type="warning"
                       icon="error"
@@ -98,9 +97,9 @@ Property of the JSON document is described in the following section.
 An example of an expanded `POST` request is available in the
 [other features section][purchase].
 
-{% include risk-indicator.md %}
+{% include alert-risk-indicator.md %}
 
-{% include purchase.md %}
+{% include card-purchase.md %}
 
 ## Type of authorization - Intent
 
@@ -112,7 +111,7 @@ An example of an expanded `POST` request is available in the
 
 ### General
 
-* *No 3-D Secure and card acceptance*: There are optional paramers that can be
+* *No 3-D Secure and card acceptance*: There are optional parameters that can be
   used in relation to 3-D Secure and card acceptance. By default, most credit
   card agreements with an acquirer will require that you use 3-D Secure for card
   holder authentication. However, if your agreement allows you to make a card
@@ -129,8 +128,6 @@ An example of an expanded `POST` request is available in the
   away, you will have to specify that the `intent` of the `purchase` is
   `AutoCapture`. The credit card will be charged and you don't need to do any
   more financial operations to this purchase.
-
-## Payment Resource
 
 {% include payment-resource.md %}
 
