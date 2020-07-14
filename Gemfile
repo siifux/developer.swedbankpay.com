@@ -15,3 +15,5 @@ gem 'html-proofer'
 gem 'html-proofer-unrendered-markdown'
 gem 'searchyll'
 gem "jekyll_asset_pipeline"
+gem "swedbank-pay-design-guide-jekyll-theme"
+

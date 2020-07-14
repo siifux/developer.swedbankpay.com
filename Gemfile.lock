@@ -149,12 +149,14 @@ GEM
     sprockets-sass (1.3.1)
       sprockets (~> 2.0)
       tilt (~> 1.1)
-    swedbank-pay-design-guide-jekyll-theme (1.6.1.pre.PullRequest0137.pre.0039)
+    swedbank-pay-design-guide-jekyll-theme (1.5.1.pre.article.pre.no.pre.main0001)
       faraday (>= 1.0.1)
       html-proofer
       jekyll (>= 3.7, < 5.0)
+      jekyll-assets
       jekyll-github-metadata
       jekyll-material-icon-tag
+      jekyll_asset_pipeline
       jemoji
       kramdown-plantuml
       nokogiri (~> 1.10)
@@ -188,7 +190,7 @@ DEPENDENCIES
   jemoji
   kramdown-plantuml
   rake (~> 13.0.1)
-  searchyll!
+  searchyll
   swedbank-pay-design-guide-jekyll-theme
 
 BUNDLED WITH
