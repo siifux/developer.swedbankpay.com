@@ -68,11 +68,15 @@ when="at the 3-D Secure verification for credit card payments" full_reference=tr
 
 {% include payment-link.md %}
 
+{% include transactions.md api_resource="creditcard" documentation_section="card" %}
+
 {% include card-authorization-transaction.md %}
 
 {% include payee-info.md api_resource="creditcard" documentation_section="card" %}
 
 {% include prices.md %}
+
+{% include 3d-secure-2.md api_resource="creditcard" documentation_section="card" %}
 
 ## Co-badge Card Choice for Dankort
 
@@ -93,11 +97,9 @@ completing the payment.
 
 ![Co-badge Dankort cards with option to choose between Dankort and Visa before paying][card-badge]{:height="500px" width="425px"}
 
-{% include settlement-reconciliation.md %}
+{% include settlement-reconciliation.md documentation_section="card" %}
 
-{% include common-problem-types.md %}
-
-{% include card-problem-messages.md %}
+{% include problems/problems.md documentation_section="card" %}
 
 {% include seamless-view-events.md api_resource="creditcard" %}
 

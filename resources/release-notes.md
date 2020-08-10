@@ -6,8 +6,6 @@ sidebar:
     items:
     - url: /resources/
       title: Introduction
-    - url: /resources/sdk-modules
-      title: SDKs and Modules
     - url: /resources/test-data
       title: Test Data
     - url: /resources/demoshop
@@ -31,7 +29,42 @@ published on this page." %}
 body="The version numbers used in headers on this page refers to the version of
 this very documentation, not to a version of any APIs described by it." %}
 
-## May 2020
+## 17 July 2020
+
+### Version 1.13.0
+
+*   Added documentation on Mobile SDK in [Modules & SDKs][modules-sdks] section.
+*   Added tables for mapping API fields to settlement files in
+    [Settlement and Reconciliation][settlement-reconcilitation].
+
+## 10 July 2020
+
+### Version 1.12.1
+
+*   Corrected the documentation by removing `generatePaymentToken` and
+    `paymentToken` from [Checkout][checkout].
+
+## 07 July 2020
+
+### Version 1.12.0
+
+*   Added information on 3-D Secure 2 for [Checkout][checkout-3ds2] and
+    [Card Payments][card-3ds2].
+*   Updated reconciliation files in [Settlement &
+    Reconciliation][settlement-reconcilitation].
+*   Added test card for Forbrugsforeningen in [Test data][test-data].
+*   Documented `paid`, `failed` and `aborted` across all resources.
+*   Added additional information on `payerReference`, `generateRecurrenceToken`,
+    `paymentToken`, `generatePaymentToken`, `recurrenceToken` and
+    `instrument` for the `paymentorder` resource in [Checkout][checkout].
+*   Corrected and updated `view-` operations for all resources.
+*   Updated [Seamless View Events][seamless-view-events-card] for all resources.
+*   Described `nonPaymentToken` and `externalNonPaymentToken` in
+    [Card Payments][card].
+*   Small corrections to [Swish Payments][swish] documentation.
+*   Clarified the [`updateOrder`][update-order-checkout] documentation.
+
+## 04 June 2020
 
 ### Version 1.11.1
 
@@ -41,22 +74,30 @@ this very documentation, not to a version of any APIs described by it." %}
     Seamless View][card-seamless-view] sequence diagrams.
 *   Added [Abort][swish-abort] in [Swish Payments][swish].
 
+## 29 May 2020
+
 ### Version 1.11.0
 
 *   Added a new [Trustly Payments][trustly-payments] section.
 *   Added information about [Storing URIs][storing-uri] in the [Technical
     Information][home-technical-information] section.
 
+## 22 May 2020
+
 ### Version 1.10.1
 
 *   Updated [Swish Redirect][swish-redirect] requests.
 *   Added `orderReference` information in Payment Order Callback in [Checkout Other features][checkout-callback].
+
+## 14 May 2020
 
 ### Version 1.10.0
 
 *   Added a new [Gift Cards][gift-cards] section with descriptions of our Gift Cards API.
 *   Added a new section [Co-badge Card Choice for Dankort][co-badge-card] in
     [Card Payments][card-payment-url].
+
+## 07 May 2020
 
 ### Version 1.9.2
 
@@ -391,6 +432,7 @@ integration and the payer.
 [card-purchase]: /payments/card/redirect#step-1-create-a-purchase
 [card-unscheduled-purchase]: /payments/card/other-features#unscheduled-purchase
 [card]: /payments/card
+[card-3ds2]: /payments/card/other-features#3-d-secure-2
 [card-redirect]: /payments/card/redirect
 [card-seamless-view]: /payments/card/seamless-view
 [checkout-capture]: /checkout/capture
@@ -400,6 +442,7 @@ integration and the payer.
 [checkout-payment-orders]: /checkout/other-features#payment-orders
 [checkout-payment-url]: /checkout/other-features#payment-url
 [checkout]: /checkout
+[checkout-3ds2]: /checkout/other-features#3-d-secure-2
 [checkout-callback]: /checkout/other-features#callback
 [co-badge-card]: /payments/card/other-features#co-badge-card-choice-for-dankort
 [credit-card-abort]: /payments/card/after-payment#abort
@@ -414,18 +457,21 @@ integration and the payer.
 [invoice]: /payments/invoice
 [mac-checkout]: /checkout/other-features#merchant-authenticated-consumer
 [mobile-pay]: /payments/mobile-pay
+[modules-sdks]: /modules-sdks
 [one-click]: /payments/card/other-features#one-click-payments
 [payment-orders]: /checkout/other-features#creating-a-payment-order
 [payments]: /payments
+[update-order-checkout]: /checkout/other-features#update-order
 [settlement-reconcilitation]: /payments/card/other-features#settlement-and-reconciliation
-[sdk-modules]: /resources/sdk-modules
+[sdk-modules]: /modules-sdks
 [storing-uri]: /home/technical-information#storing-uris
-[swish-api-errors]: /payments/swish/other-features#swish-api-errors
+[swish-api-errors]: /payments/swish/other-features#problems
 [swish-direct-mcom]: /payments/swish/direct#step-2b-create-m-commerce-sale-transaction
 [swish-direct]: /payments/swish/direct
 [swish-other-features]: /payments/swish/other-features
 [swish-redirect]: /payments/swish/redirect
 [swish-seamless-view]: /payments/swish/seamless-view
+[seamless-view-events-card]: /payments/card/other-features#seamless-view-events
 [swish]: /payments/swish
 [swish-abort]: /payments/swish/after-payment#abort
 [terminology]: /resources/terminology

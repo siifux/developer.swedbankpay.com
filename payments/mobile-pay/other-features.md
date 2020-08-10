@@ -94,13 +94,13 @@ Content-Type: application/json
 | {% icon check %} | └➔&nbsp;`intent`                | `string`     | `Authorization`                                                                                                                                                                                                                                           |
 | {% icon check %} | └➔&nbsp;`currency`              | `string`     | `NOK`, `SEK`, `DKK`, `USD` or `EUR`.                                                                                                                                                                                                                      |
 | {% icon check %} | └➔&nbsp;`prices`                | `object`     | The prices object.                                                                                                                                                                                                                                        |
-| {% icon check %} | └─➔&nbsp;`type`                 | `string`     | `Visa` (for card type Visa), `MC` (for card type Mastercard)                                                                                                                                                                                              |
+| {% icon check %} | └─➔&nbsp;`type`                 | `string`     | `Visa` (for card type Visa), `MC` (for card type Mastercard), `MobilePay` (for all card types).                                                                                                                                                           |
 | {% icon check %} | └─➔&nbsp;`amount`               | `integer`    | {% include field-description-amount.md currency="DKK" %}                                                                                                                                                                                                  |
 | {% icon check %} | └─➔&nbsp;`vatAmount`            | `integer`    | {% include field-description-vatamount.md currency="DKK" %}                                                                                                                                                                                               |
 |                  | └─➔&nbsp;`feeAmount`            | `integer`    | If the amount given includes Fee, this may be displayed for the user in the payment page (redirect only).                                                                                                                                                 |
 | {% icon check %} | └➔&nbsp;`description`           | `string(40)` | {% include field-description-description.md documentation_section="mobile-pay" %}                                                                                                                                                                         |
 |                  | └➔&nbsp;`payerReference`        | `string`     | The reference to the payer (consumer/end-user) from the merchant system, like mobile number, customer number etc.                                                                                                                                         |
-| {% icon check %} | └➔&nbsp;`userAgent`             | `string`     | The user agent reference of the consumer's browser - The [`User-Agent` string][user-agent] of the consumer's web browser.                                                                                                                                 |
+| {% icon check %} | └➔&nbsp;`userAgent`             | `string`     | The [`User-Agent` string][user-agent] of the consumer's web browser.                                                                                                                                                                                      |
 | {% icon check %} | └➔&nbsp;`language`              | `string`     | {% include field-description-language.md api_resource="mobilepay" %}                                                                                                                                                                                      |
 | {% icon check %} | └➔&nbsp;`urls`                  | `object`     | The URLs object containing the urls used for this payment.                                                                                                                                                                                                |
 | {% icon check %} | └─➔&nbsp;`completeUrl`          | `string`     | The URI that Swedbank Pay will redirect back to when the payment page is completed. This does not indicate a successful payment, only that it has reached a completion state. A `GET` request needs to be performed on the payment to inspect it further. |
@@ -475,7 +475,7 @@ sequenceDiagram
 
 The response will be the `payment` resource with its `state` set to `Aborted`.
 
-{% include settlement-reconciliation.md api_resource="mobilepay" %}
+{% include settlement-reconciliation.md api_resource="mobilepay" documentation_section="mobile-pay" %}
 
 {% include payment-link.md %}
 
@@ -483,12 +483,13 @@ The response will be the `payment` resource with its `state` set to `Aborted`.
 
 {% include callback-reference.md api_resource="mobilepay" %}
 
-{% include transactions-reference.md api_resource="mobilepay"
-documentation_section="mobile-pay" %}
+{% include transactions.md api_resource="mobilepay" documentation_section="mobile-pay" %}
 
 {% include prices.md api_resource="mobilepay" %}
 
 {% include payee-info.md api_resource="mobilepay" documentation_section="mobile-pay" %}
+
+{% include problems/problems.md documentation_section="mobile-pay" %}
 
 {% include iterator.html prev_href="after-payment"
                          prev_title="Back: After Payment" %}
