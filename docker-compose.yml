@@ -8,25 +8,23 @@ services:
     environment:
       - DEBUG=true
     ports:
-      - '9200:9200'
-      - '9300:9300'
-    environment:
-      - bootstrap.memory_lock=true
-      - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
-      - cluster.routing.allocation.disk.threshold_enabled=false
+      - 4000:4000
+      - 35729:35729
     volumes:
       - .:/srv/jekyll
       - .bundle:/usr/gem
     depends_on:
       - kibana
   elasticsearch:
+    container_name: elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
     environment:
       - bootstrap.memory_lock=true
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
       - cluster.routing.allocation.disk.threshold_enabled=false
+    ports:
+      - 9200:9200
     ulimits:
       memlock:
         soft: -1
