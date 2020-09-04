@@ -349,6 +349,8 @@ Content-Type: application/json
 {% include transaction-list-response.md api_resource="vipps"
 documentation_section="vipps" transaction="reversal" %}
 
+{% include partial-reversal.md api_resource="vipps" %}
+
 ### Create reversal transaction
 
 A `reversal` transaction can be created if the `rel` `create-reversal` is

@@ -1,9 +1,13 @@
 
-### Part-reversal
+### Partial reversal
 
-As mentioned above, the `reversal transaction is used when a captured payment needs to be reversed.
-A transaction can also be partly reversed, meaning you can reverse..
-See the example below on how to do a part `reversal`.
+As mentioned above, the `reversal` transaction is used when a captured payment
+needs to be reversed. The `amount` field in the `reversal` is exactly the same
+as the corresponding `amount` in `Capture`.
+A transaction can also be partially reversed, the `amount` in the `Reversal` will
+then be smaller than the corresponding `amount` in `Capture`.
+
+See the example below on how to do a partial `reversal`.
 
 {:.code-header}
 **Request**
@@ -15,7 +19,7 @@ Authorization: Bearer <AccessToken>
 Content-Type: application/json
 {
     "transaction": {
-        "amount": 5000,
+        "amount": 3000,
         "vatAmount": 0,
         "bonusAmount": 0,
         "payeeReference": "Reference1590150468",
@@ -32,7 +36,7 @@ Content-Type: application/json
                 "discountDescription": "Volume discount",
                 "quantity": 2,
                 "quantityUnit": "pcs",
-                "unitPrice": 2500,
+                "unitPrice": 1500,
                 "discountPrice": 0,
                 "vatPercent": 0,
                 "amount": 5000,
@@ -60,7 +64,7 @@ Content-Type: application/json
             "type": "Reversal",
             "state": "Completed",
             "number": 40101653482,
-            "amount": 2500,
+            "amount": 1500,
             "vatAmount": 0,
             "description": "description for transaction",
             "payeeReference": "someUniqueReference1590150468",

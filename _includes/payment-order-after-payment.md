@@ -86,6 +86,8 @@ Content-Type: application/json
 
 {% include payment-order-reversal.md documentation_section=documentation_section %}
 
+{% include partial-reversal.md api_resource=api_resource %}
+
 {% include alert.html type="informative" icon="info" body=" Note that all of the
 operations `Cancel`, `Capture` and `Reversal` must be implemented." %}
 

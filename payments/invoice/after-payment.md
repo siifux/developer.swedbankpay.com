@@ -159,6 +159,8 @@ The `reversal` resource will be returned, containing information about the newly
 {% include transaction-response.md api_resource="invoice"
 documentation_section="invoice" transaction="reversal" %}
 
+{% include partial-reversal.md api_resource="invoice" %}
+
 ### Inspecting the Reversal
 
 The `reversals` resource will list the reversal transactions

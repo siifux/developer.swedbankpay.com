@@ -266,6 +266,8 @@ sequenceDiagram
   SwedbankPay-->>-Merchant: transaction resource
 ```
 
+{% include partial-reversal.md api_resource="creditcard" %}
+
 {% include abort-reference.md api_resource="creditcard" %}
 
 ## Remove payment token
